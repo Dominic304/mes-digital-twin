@@ -1,0 +1,19 @@
+[gd_scene format=3 uid="uid://tl0ct4x8t1nl"]
+
+[ext_resource type="Script" uid="uid://b20urrbex20kl" path="res://box.gd" id="1_g2tbl"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_i0ud1"]
+size = Vector2(32, 32)
+
+[node name="Box" type="Area2D" unique_id=1818075773]
+script = ExtResource("1_g2tbl")
+
+[node name="ColorRect" type="ColorRect" parent="." unique_id=818153437]
+offset_left = -16.0
+offset_top = -16.0
+offset_right = 16.0
+offset_bottom = 16.0
+color = Color(0.06666667, 0.2509804, 1, 1)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=147095173]
+shape = SubResource("RectangleShape2D_i0ud1")

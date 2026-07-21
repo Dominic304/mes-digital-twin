@@ -1,6 +1,14 @@
 [gd_scene format=3 uid="uid://dvapmwpagc75r"]
 
 [ext_resource type="Script" uid="uid://ccr716jhj5jn3" path="res://main.gd" id="1_ig7tw"]
+[ext_resource type="PackedScene" uid="uid://nydfnb8djw8w" path="res://machine.tscn" id="2_0xm2m"]
 
-[node name="Main" type="Node2D" unique_id=565916862]
+[node name="Main" type="Node2D" unique_id=769347129]
 script = ExtResource("1_ig7tw")
+
+[node name="Machine" parent="." unique_id=927016306 instance=ExtResource("2_0xm2m")]
+position = Vector2(500, 300)
+
+[node name="SpawnTimer" type="Timer" parent="." unique_id=1295458587]
+wait_time = 3.0
+autostart = true

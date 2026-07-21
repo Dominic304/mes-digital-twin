@@ -1,0 +1,22 @@
+[gd_scene format=3 uid="uid://nydfnb8djw8w"]
+
+[ext_resource type="Script" uid="uid://c32l8higjvs8s" path="res://machine.gd" id="1_6a4ke"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_i0ud1"]
+size = Vector2(80, 80)
+
+[node name="Machine" type="Area2D" unique_id=927016306]
+script = ExtResource("1_6a4ke")
+
+[node name="ColorRect" type="ColorRect" parent="." unique_id=2092672139]
+offset_left = -40.0
+offset_top = -40.0
+offset_right = 40.0
+offset_bottom = 40.0
+color = Color(0, 0, 0, 1)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=703921199]
+shape = SubResource("RectangleShape2D_i0ud1")
+
+[node name="ProcessTimer" type="Timer" parent="." unique_id=1452040885]
+one_shot = true

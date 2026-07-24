@@ -11,7 +11,6 @@ func _ready() -> void:
 	udp.connect_to_host("127.0.0.1", 5005)
 	machine.state_changed.connect(_on_machine_state_changed)
 	machine.box_produced.connect(_on_machine_box_produced)
-	
 	spawn_timer.timeout.connect(_on_spawn_timer_timeout)
 
 func _on_machine_state_changed(state_str: String) -> void:
@@ -20,6 +19,7 @@ func _on_machine_state_changed(state_str: String) -> void:
 
 func _on_machine_box_produced() -> void:
 	var msg = '{"event": "produced", "value": 1}'
+	print("Attempting to send box produced network packet...")
 	udp.put_packet(msg.to_utf8_buffer())
 
 func _on_spawn_timer_timeout() -> void:

@@ -1,6 +1,9 @@
 extends Area2D
+
 signal state_changed(new_state_string)
 signal box_produced
+signal scrap_produced           
+signal temperature_changed(temp) 
 
 enum State { IDLE, PROCESSING, FAULT }
 var current_state: State = State.IDLE
@@ -11,15 +14,39 @@ var current_box: Area2D = null
 @onready var color_rect: ColorRect = $ColorRect
 @onready var timer: Timer = $ProcessTimer
 
+
+var temperature: float = 20.0
+var last_broadcast_temp: int = 20
+
 func _ready() -> void:
 	area_entered.connect(_on_area_entered)
 	timer.timeout.connect(_on_process_complete)
 	update_visuals()
+	
+	
+
+
+func _process(delta: float) -> void:
+	
+	if current_state == State.PROCESSING:
+		temperature += 10.0 * delta
+	else:
+		temperature -= 15.0 * delta
+		
+	temperature = clamp(temperature, 20.0, 100.0)
+	
+	if temperature >= 90.0 and current_state != State.FAULT:
+		print("Machine OVERHEATED!")
+		break_down()
+		
+	if int(temperature) != last_broadcast_temp:
+		last_broadcast_temp = int(temperature)
+		temperature_changed.emit(last_broadcast_temp)
 
 func _on_area_entered(area: Area2D) -> void:
 	if area.has_method("stop"):
-		area.stop() 
-		box_queue.append(area) 
+		area.stop()
+		box_queue.append(area)
 		process_next_box()
 
 func process_next_box() -> void:
@@ -31,9 +58,15 @@ func process_next_box() -> void:
 
 func _on_process_complete() -> void:
 	if current_box and current_state == State.PROCESSING:
-		current_box.start() 
-		box_queue.pop_front() 
-		box_produced.emit()  
+		
+		if randf() < 0.2:
+			scrap_produced.emit()
+			current_box.queue_free() 
+		else:
+			box_produced.emit()
+			current_box.start()
+			
+		box_queue.pop_front()
 		current_box = null
 		current_state = State.IDLE
 		update_visuals()
@@ -48,6 +81,11 @@ func break_down() -> void:
 
 func fix() -> void:
 	if current_state == State.FAULT:
+		
+		if temperature > 60.0:
+			print("Too hot to fix! Let it cool down to 80...")
+			return
+		
 		print("Machine FIXED!")
 		if current_box:
 			current_state = State.PROCESSING
@@ -72,5 +110,5 @@ func update_visuals() -> void:
 		State.FAULT:
 			color_rect.color = Color.RED
 			state_str = "FAULT"
-	state_changed.emit(state_str) 
 			
+	state_changed.emit(state_str)

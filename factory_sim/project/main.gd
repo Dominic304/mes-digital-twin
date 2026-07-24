@@ -9,8 +9,13 @@ var udp := PacketPeerUDP.new()
 func _ready() -> void:
 	print("Factory Simulation Running!")
 	udp.connect_to_host("127.0.0.1", 5005)
+	
 	machine.state_changed.connect(_on_machine_state_changed)
 	machine.box_produced.connect(_on_machine_box_produced)
+	
+	machine.scrap_produced.connect(_on_machine_scrap_produced)
+	machine.temperature_changed.connect(_on_machine_temperature_changed)
+	
 	spawn_timer.timeout.connect(_on_spawn_timer_timeout)
 
 func _on_machine_state_changed(state_str: String) -> void:
@@ -19,7 +24,16 @@ func _on_machine_state_changed(state_str: String) -> void:
 
 func _on_machine_box_produced() -> void:
 	var msg = '{"event": "produced", "value": 1}'
-	print("Attempting to send box produced network packet...")
+	udp.put_packet(msg.to_utf8_buffer())
+
+func _on_machine_scrap_produced() -> void:
+	print("GODOT: Sending Scrap Packet!")
+	var msg = '{"event": "scrap", "value": 1}'
+	udp.put_packet(msg.to_utf8_buffer())
+
+func _on_machine_temperature_changed(temp: int) -> void:
+	print("GODOT: Sending Temp Packet: ", temp) 
+	var msg = '{"event": "temperature", "value": %d}' % temp
 	udp.put_packet(msg.to_utf8_buffer())
 
 func _on_spawn_timer_timeout() -> void:
